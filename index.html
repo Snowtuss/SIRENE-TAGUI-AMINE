@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>Formulaire SIRENE</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<link rel="stylesheet" href="css/style.css">
+
+	 <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/album/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="album.css" rel="stylesheet">
+	</head>
+	<body>
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">Formulaire SIRENE</h2>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-10">
+					<div class="wrapper img" style="background-image: url(images/img.jpg);">
+						<div class="row">
+							<div class="col-md-9 col-lg-7">
+								<div class="contact-wrap w-100 p-md-5 p-4">
+									<h3 class="mb-4">Veuillez renseigner le numéro de SIRENE : </h3>
+									<div id="form-message-warning" class="mb-4"></div> 
+				      		<div id="form-message-success" class="mb-4">
+				            Your message was sent, thank you!
+				      		</div>
+									 <main role="main" id="app">
+        <div class="album py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <form class="w-100">
+                        <div class="form-group">
+                            <label for="sirene">Sirene</label>
+                            <input type="text" v-model="sirene" class="form-control" id="sirene">
+                            <span class="text-danger" v-if="error != ''">{{ error }}</span>
+                        </div>
+                        <button type="button" v-if="!loading" v-on:click="getData" class="btn btn-primary">Rechercher</button>
+                        <span v-else>Veuillez patienter ...</span>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="album py-5" v-if="res">
+            <div class="container">
+                <div class="row">
+                    <div>
+                        <label for="sirene">Date Création</label>
+                        <b>{{ res.dateCreationUniteLegale }}</b>
+                    </div>
+                    <div class="mx-3">
+                        --
+                    </div>
+                    <div>
+                        <label for="sirene">Catégorie</label>
+                        <b>{{ res.categorieEntreprise }}</b>
+                    </div>
+                    <div class="mx-3">
+                        --
+                    </div>
+                    <div>
+                        <label for="sirene">Dernier Traitement</label>
+                        <b>{{ res.dateDernierTraitementUniteLegale }}</b>
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th scope="col">Nomination</th>
+                            <th scope="col">Date Début</th>
+                            <th scope="col">Date Fin</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="period in res.periodesUniteLegale">
+                                <td>{{ period.denominationUniteLegale }}</td>
+                                <td>{{ period.dateDebut }}</td>
+                                <td>{{ period.dateFin }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="js/jquery.min.js"></script>
+  <script src="js/popper.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.validate.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="vue.min.js"></script>
+    <script src="axios.min.js"></script>
+  <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                sirene: '',
+                loading: false,
+                error: '',
+                res: null
+            },
+            methods: {
+                getData: function() {
+                    this.loading = true;
+                    this.error = '';
+                    const token = 'cf60e0a5-f067-3c18-a097-2fbddae8c045';
+
+                    if (this.sirene.length != 9) {
+                        this.error = 'Erreur de longeure';
+                    }
+                    else if (isNaN(this.sirene)) {
+                        this.error = 'Erreur de type de variable';
+                    }
+                    else {
+                        axios.get('https://api.insee.fr/entreprises/sirene/V3/siren/' + this.sirene, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        }).then(function(data) {
+                            app.res = data.data.uniteLegale;
+                        }).finally(function() {
+                            app.loading = false;
+                        });
+                    }
+                }
+            }
+        })
+    </script>
+	</body>
+</html>
+
