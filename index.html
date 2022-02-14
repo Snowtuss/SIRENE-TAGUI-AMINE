@@ -81,6 +81,8 @@
                         <thead>
                         <tr>
                             <th scope="col">Nomination</th>
+							<th scope="col">NIC du siege</th>
+							<th scope="col">Appartenance</th>
                             <th scope="col">Date Début</th>
                             <th scope="col">Date Fin</th>
                         </tr>
@@ -88,8 +90,11 @@
                         <tbody>
                             <tr v-for="period in res.periodesUniteLegale">
                                 <td>{{ period.denominationUniteLegale }}</td>
+								<td>{{ period.nicSiegeUniteLegale }}</td>
+								<td>{{ period.economieSocialeSolidaireUniteLegale }}</td>
                                 <td>{{ period.dateDebut }}</td>
                                 <td>{{ period.dateFin }}</td>
+								
                             </tr>
                         </tbody>
                     </table>
@@ -126,7 +131,7 @@
                 getData: function() {
                     this.loading = true;
                     this.error = '';
-                    const token = 'cf60e0a5-f067-3c18-a097-2fbddae8c045';
+                    const token = '9dcb7025-2718-3c2c-9e67-45c184586a23';
 
                     if (this.sirene.length != 9) {
                         this.error = 'Erreur de longeure';
